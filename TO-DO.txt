@@ -1,0 +1,35 @@
+Things to do
+
+1. Parse input
+  -Parse .var files
+    -Store as a map (dynamically chosen)
+      -Key is variable name (A,B,C,...)
+      -Value are the list of values for each variable
+  -Parse .con files
+    -Store as a list of char arrays
+2. Classes
+    -Class node holds the map, and an assignment array
+    -assignment array holds ASCII value of variable, and assignment
+      -EX A:1,B:4,C:5 = [65,1,66,4,67,5]
+        -Can use array when printing out assignment
+    -Classes will be connected via LinkedList
+Class Methods
+  a. Heuristics
+      -choosing variable heuristic (smallest)
+      -choosing value (least constrained)
+  b. Forward checking alg
+      -one variable at a time
+        -check constraints to make sure they don't fail
+          -if failed, changed the variable that made it fail
+      -loop this 30 times or until solved.
+  c. Backwards checking
+
+3. Order of check
+        1. Create initial node object
+        2. Assign first var a value using heuristics and store in array
+        3. Make new node a copy of current and make it next in LinkedList
+        4. Based on array, trim values in map.
+        5. Constraint check
+          a. If passes, repeat 2-5
+          b. If fails, output array, move to previous node, delete node, then repeat 2-5
+        6. Increment counter
