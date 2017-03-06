@@ -1,3 +1,6 @@
+Java AIProject2 <*.var> <*.con> <none/fc>
+
+
 Things to do
 
 1. Parse input
@@ -12,7 +15,7 @@ Things to do
     -assignment array holds ASCII value of variable, and assignment
       -EX A:1,B:4,C:5 = [65,1,66,4,67,5]
         -Can use array when printing out assignment
-    -Classes will be connected via LinkedList
+    -Classes will be connected via Linked List
 Class Methods
   a. Heuristics
       -choosing variable heuristic (smallest)
