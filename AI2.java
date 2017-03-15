@@ -60,14 +60,71 @@ public class AI2 {
     if(args[2].equals("fc"))
       fc = true;
 
-    LinkedList<Node> space = new LinkedList<Node>();
+    //LinkedList<Node> space = new LinkedList<Node>();
     Node head = new Node(vList);
-    space.addFirst(head);
+    //space.addFirst(head);
 
-    Node next = null;
-
+    Node next = head;
+    
+    Stack<Node> search = new Stack<>();
+    Comparator<Node> comparator = new CSPCompare();
+    PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
+    
+    int i = 0;
     for(int i=0; i < 30; i++) {
       next = new Node(head);
-    } //end for
+    } //end forwhile(i < 30) {
+    	char nextVariable = next.varHuer(constr);
+    	Node child = null;
+		if(vList.containsKey(nextVariable))
+		{
+			List<Integer> tempList = new ArrayList<Integer>();
+    		tempList = vList.get(nextVariable);
+			for(int j = 0 ; j < vList.get(nextVariable).size();j++)
+			{
+				String var = Character.toString(nextVariable);
+	    		child = new Node(next, var, tempList.get(i));
+	    		child.valHuer(constr);
+	    		pq.offer(child);
+			}
+			// Add next Node to stack
+		 	search.push(next);
+		 	
+		}
+		
+		boolean flag = false;
+		
+		while(!pq.isEmpty())
+		{
+			child = pq.poll();
+		 	i++;
+		 	if(child.constrCheck() ==  true)
+		 	{
+		 		next = child;
+		 		flag = true;
+		 		pq.clear();
+		 		break;
+		 	}
+		 	else 
+		 	{
+		 		//i++;
+		 		child.printAssignment();
+		 		//child = pq.poll();
+		 	}
+		}
+		
+		if(flag == false)
+		{
+			if(!search.isEmpty()){
+				next = search.pop();
+				System.out.println("There is no solution.");
+				return;
+			}
+
+		}
+    	//next = new Node(head);
+
+      
+    } //end while
   } //end main
 } //end class AI2
