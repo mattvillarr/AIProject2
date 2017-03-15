@@ -16,7 +16,7 @@ public class AI2 {
 
     Scanner vScan = null;
     Scanner cScan = null;
-    Map<String, Set<Integer>> vList = new HashMap<String, Set<Integer>>();
+    Map<String, List<Integer>> vList = new HashMap<String, List<Integer>>();
 
     List<char[]> constr = new ArrayList<>();
 
@@ -25,7 +25,7 @@ public class AI2 {
 
       while(vScan.hasNext()) {
         String key = vScan.next();
-        Set<Integer> tempList = new HashSet<>();
+        List<Integer> tempList = new ArrayList<>();
 
         while(vScan.hasNextInt())
           tempList.add(vScan.nextInt());
@@ -33,7 +33,7 @@ public class AI2 {
           vList.put(key.substring(0, 1), tempList);
       } //end while
 
-        /*for(Map.Entry entry : vList.entrySet()) {
+        /*for(Map.Entry entry : vList.entryList()) {
           System.out.println(entry.getKey() + ", " + entry.getValue());
         } //end for */
     } //end try
