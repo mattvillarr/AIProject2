@@ -71,9 +71,7 @@ public class AI2 {
     PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
     
     int i = 0;
-    for(int i=0; i < 30; i++) {
-      next = new Node(head);
-    } //end forwhile(i < 30) {
+    while(i < 30) {
     	char nextVariable = next.varHuer(constr);
     	Node child = null;
 		if(vList.containsKey(nextVariable))
