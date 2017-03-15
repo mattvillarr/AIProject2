@@ -71,7 +71,7 @@ public class Node {
     return returnVar;
   } //end varHuer
 
-  public int valHuer(List<char[]> constraint) {
+  public void valHuer(List<char[]> constraint) {
 
     Map<String, List<Integer>> check = new HashMap<String, List<Integer>>();
 
@@ -84,7 +84,6 @@ public class Node {
     for (List<Integer> vals : check.values())
       amount += vals.size();
     maxvals = amount;
-    return amount;
   } //end valHuer
 
 
