@@ -36,6 +36,14 @@ public class Node {
     assignment.add(val);
   } //end Node(3)
 
+    public int getMaxvals(){
+  	  return maxvals;
+    }
+    
+    public void setMaxvals(int max){
+  	  this.maxvals = max;
+    }
+  
   public char varHuer(List<char[]> constraint) {
     int maxSize = -1;
     int mostCon1 = 0;
