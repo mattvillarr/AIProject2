@@ -35,7 +35,7 @@ public class AI2 {
 
         /*for(Map.Entry entry : vList.entrySet()) {
           System.out.println(entry.getKey() + ", " + entry.getValue());
-        } //end for*/ 
+        } //end for*/
     } //end try
     catch(FileNotFoundException g) {
       g.printStackTrace();
@@ -48,7 +48,7 @@ public class AI2 {
         char arr[] = {in[0], in[2], in[4]};
         constr.add(arr);
       } //end while
-      
+
         /*for(int i = 0; i < constr.size(); i++) {
           char[] got = constr.get(i);
           System.out.println(got[0] + " " + got[1] + " " + got[2]);
@@ -66,27 +66,27 @@ public class AI2 {
     //space.addFirst(head);
 
     Node next = head;
-    
-    Stack<Node> search = new Stack<>();
+
+    Stack<Node> searchSTK = new Stack<>();
     Comparator<Node> comparator = new CSPCompare();
     PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
-    
+
     System.out.println("Now doing backtracking...");
-    
+
 	  int i = 0;
     while(i < 30) {
     	char nextVariable = next.varHuer(constr);
-    	
+
     	System.out.println("Now checking Variable: " + nextVariable);
-    	
-    	
-    	
+
+
+
     	Node child = null;
 		if(vList.containsKey(Character.toString(nextVariable)))
 		{
 			for(int j = 0 ; j < vList.get(Character.toString(nextVariable)).size();j++)
 			{
-				
+
 				String var = Character.toString(nextVariable);
 				//System.out.println(tempList.get(i));
 				child = new Node(next, var, vList.get(Character.toString(nextVariable)).get(j));
@@ -94,16 +94,15 @@ public class AI2 {
 	    		pq.offer(child);
 			}
 			// Add next Node to stack
-		 	search.push(next);
-		 	
+		 	searchSTK.push(next);
+
 		}
-		
+
 		boolean flag = false;
-		
+
 		while(!pq.isEmpty())
 		{
 			child = pq.poll();
-		 	i++;
 		 	if(child.constrCheck(constr) ==  true)
 		 	{
 		 		next = child;
@@ -111,19 +110,21 @@ public class AI2 {
 		 		pq.clear();
 		 		break;
 		 	}
-		 	else 
+		 	else
 		 	{
-		 		//i++;
+		 		i++;
 		 		child.printAssignment();
+        System.out.print(" fail \n");
 		 		//child = pq.poll();
-		 		
+
 		 	}
 		}
-		
+
 		if(flag == false)
 		{
-			if(!search.isEmpty()){
-				next = search.pop();
+			if(!searchSTK.isEmpty())
+				next = searchSTK.pop();
+      else {
 				System.out.println("There is no solution.");
 				return;
 			}
@@ -131,7 +132,7 @@ public class AI2 {
 		}
     	//next = new Node(head);
 
-      
+
     } //end for
   } //end main
 } //end class AI2
