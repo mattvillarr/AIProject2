@@ -8,7 +8,7 @@ public class Node {
 
   public Map<String, List<Integer>> vars = new HashMap<String, List<Integer>>();
   public List<Integer> assignment = new ArrayList<Integer>();
-  int maxvals = -1;
+  private int maxvals = -1;
 
   public Node(Map<String, List<Integer>> original) { //constructor
     for(Map.Entry<String, List<Integer>> orig : original.entrySet()) //copy map
@@ -36,6 +36,14 @@ public class Node {
     assignment.add(val);
   } //end Node(3)
 
+  public int getMaxVals() {
+    return maxvals;
+  } //end getMaxvals
+
+  public void setMaxVals(int max) {
+    this.maxvals = max;
+  } //end setMaxVals
+
   List<String> pastVariables = new ArrayList<>();
   public char varHuer(List<char[]> constraint) {
     int maxSize = -1;
@@ -44,12 +52,12 @@ public class Node {
     char constVar = 'z';
     char constVar2 = 'z';
     char returnVar = 'z';
-    
-    
+
+
     int mrv = 1000;
     char returnChar = 'z';
    Map<String, Integer> remainingVariables = new HashMap<String, Integer>();
-    
+
     //**********************************************************
     //				FIND MAX SET 							   *
     //**********************************************************
@@ -62,9 +70,9 @@ public class Node {
         if(v.size() == maxSize)
         	remainingVariables.put(entry.getKey(),0);
     }
-    
+
     System.out.println("Max Length is :" + maxSize);
-    
+
     //**********************************************************
     //				MOST CONSTRAINED VARIABLE				   *
     //**********************************************************
@@ -72,12 +80,12 @@ public class Node {
     {
     	List<Integer> varList = entry.getValue();
     	//System.out.println("Var: " + entry.getKey() + " size: " + varList.size());
-    
+
 		if(varList.size() < mrv && !pastVariables.contains(Character.toString(constVar)))
     	{
     		mrv = varList.size();
     		constVar = entry.getKey().charAt(0);
-    		System.out.println("Current Variable is: " + constVar);    		
+    		System.out.println("Current Variable is: " + constVar);
     	}
 
     }
@@ -90,7 +98,7 @@ public class Node {
     //**********************************************************
     //				MOST CONSTRAINING VARIABLE				   *
     //**********************************************************
-    
+
     	//List<Integer> varList = entry.getValue();
     	//System.out.println("Var: " + entry.getKey() + " size: " + varList.size());
     int max = 0;
@@ -104,20 +112,20 @@ public class Node {
 				if(constraint.contains(entry.getKey()))
 					remainingVariables.put(entry.getKey(), entry.getValue() + 1);
 			}
-			
+
 			if(entry.getValue() > max)
 			{
 				max = entry.getValue();
 				constVar = entry.getKey().charAt(0);
-				
+
 			}
 		}
-		    
+
 	}
 	pastVariables.add(Character.toString(constVar));
     System.out.println("Returning Variable: " + constVar);
     return constVar;
-    
+
     /*
     for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
       List<Integer> v = entry.getValue();
@@ -163,7 +171,7 @@ public class Node {
 
    public boolean constrCheck(List<char[]> constraints) { //do this now
 	  boolean flag = false;
-	 
+
 	  for(int i = 0; i < constraints.size(); i++) {
           char[] got = constraints.get(i);
           if(got[1] == '<' && got[0] < got[2])
@@ -176,8 +184,8 @@ public class Node {
         	  flag = true;
           else
         	  flag = false;
-        	  
-        	  
+
+
           //System.out.println(got[0] + " " + got[1] + " " + got[2]);
         } //end for
     return flag;
