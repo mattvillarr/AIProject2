@@ -36,6 +36,7 @@ public class Node {
     assignment.add(val);
   } //end Node(3)
 
+  List<String> pastVariables = new ArrayList<>();
   public char varHuer(List<char[]> constraint) {
     int maxSize = -1;
     int mostCon1 = 0;
@@ -43,7 +44,81 @@ public class Node {
     char constVar = 'z';
     char constVar2 = 'z';
     char returnVar = 'z';
+    
+    
+    int mrv = 1000;
+    char returnChar = 'z';
+   Map<String, Integer> remainingVariables = new HashMap<String, Integer>();
+    
+    //**********************************************************
+    //				FIND MAX SET 							   *
+    //**********************************************************
+    for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
+        List<Integer> v = entry.getValue();
+        if(v.size() > maxSize) {
+          maxSize = v.size();
+          //constVar = entry.getKey().charAt(0);
+        } //end if
+        if(v.size() == maxSize)
+        	remainingVariables.put(entry.getKey(),0);
+    }
+    
+    System.out.println("Max Length is :" + maxSize);
+    
+    //**********************************************************
+    //				MOST CONSTRAINED VARIABLE				   *
+    //**********************************************************
+    for(Map.Entry<String, List<Integer>> entry : vars.entrySet())
+    {
+    	List<Integer> varList = entry.getValue();
+    	//System.out.println("Var: " + entry.getKey() + " size: " + varList.size());
+    
+		if(varList.size() < mrv && !pastVariables.contains(Character.toString(constVar)))
+    	{
+    		mrv = varList.size();
+    		constVar = entry.getKey().charAt(0);
+    		System.out.println("Current Variable is: " + constVar);    		
+    	}
 
+    }
+    if(mrv < maxSize)
+    {
+    	 pastVariables.add(Character.toString(constVar));
+    	 System.out.println("Returning Variable: " + constVar);
+    	 return constVar;
+    }
+    //**********************************************************
+    //				MOST CONSTRAINING VARIABLE				   *
+    //**********************************************************
+    
+    	//List<Integer> varList = entry.getValue();
+    	//System.out.println("Var: " + entry.getKey() + " size: " + varList.size());
+    int max = 0;
+	if(mrv == maxSize)
+	{
+        //constVar2 = entry.getKey().charAt(0);
+		for(Map.Entry<String, Integer> entry : remainingVariables.entrySet())
+		{
+			for(char c[]: constraint)
+			{
+				if(constraint.contains(entry.getKey()))
+					remainingVariables.put(entry.getKey(), entry.getValue() + 1);
+			}
+			
+			if(entry.getValue() > max)
+			{
+				max = entry.getValue();
+				constVar = entry.getKey().charAt(0);
+				
+			}
+		}
+		    
+	}
+	pastVariables.add(Character.toString(constVar));
+    System.out.println("Returning Variable: " + constVar);
+    return constVar;
+    
+    /*
     for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
       List<Integer> v = entry.getValue();
       if(v.size() > maxSize) {
@@ -68,10 +143,10 @@ public class Node {
           returnVar = constVar;
       } //end if
     } //end for
-    return returnVar;
+    return returnVar;*/
   } //end varHuer
 
-  public void valHuer(List<char[]> constraint) {
+   public void valHuer(List<char[]> constraint) {
 
     Map<String, List<Integer>> check = new HashMap<String, List<Integer>>();
 
@@ -86,9 +161,26 @@ public class Node {
     maxvals = amount;
   } //end valHuer
 
-
-  public boolean constrCheck() { //do this now
-    return false;
+   public boolean constrCheck(List<char[]> constraints) { //do this now
+	  boolean flag = false;
+	 
+	  for(int i = 0; i < constraints.size(); i++) {
+          char[] got = constraints.get(i);
+          if(got[1] == '<' && got[0] < got[2])
+        	  flag = true;
+          else if(got[1] == '>' && got[0] > got[2])
+        	  flag = true;
+          else if(got[1] == '=' && got[0] == got[2])
+        	  flag = true;
+          else if(got[1] == '!' && got[0] != got[2])
+        	  flag = true;
+          else
+        	  flag = false;
+        	  
+        	  
+          //System.out.println(got[0] + " " + got[1] + " " + got[2]);
+        } //end for
+    return flag;
   } //end constrCheck
 
   public void printAssignment() {
@@ -98,6 +190,7 @@ public class Node {
       i++;
       System.out.print(" : " + assignment.get(i) + ", ");
     } //end for
+    System.out.println();
   } //end printAssignment
 
 
