@@ -93,9 +93,6 @@ public class AI2 {
 	    		child.valHuer(constr);
 	    		pq.offer(child);
 			}
-			// Add next Node to stack
-		 	searchSTK.push(next);
-
 		}
 
 		boolean flag = false;
@@ -105,6 +102,7 @@ public class AI2 {
 			child = pq.poll();
 		 	if(child.constrCheck(constr) ==  true)
 		 	{
+        searchSTK.push(next); //will next on the stack be changed to child??
 		 		next = child;
 		 		flag = true;
 		 		pq.clear();
@@ -122,8 +120,11 @@ public class AI2 {
 
 		if(flag == false)
 		{
-			if(!searchSTK.isEmpty())
+			if(!searchSTK.isEmpty()) {
 				next = searchSTK.pop();
+        //List<Integer> rm = next.vars.get();
+
+      }
       else {
 				System.out.println("There is no solution.");
 				return;

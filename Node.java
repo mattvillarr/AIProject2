@@ -9,8 +9,10 @@ public class Node {
   public Map<String, List<Integer>> vars = new HashMap<String, List<Integer>>();
   public List<Integer> assignment = new ArrayList<Integer>();
   private int maxvals = -1;
+  private String keyVal = " ";
+  private int valUsed = -1;
 
-  public Node(Map<String, List<Integer>> original) { //constructor
+  public Node(Map<String, List<Integer>> original) { //initial constructor
     for(Map.Entry<String, List<Integer>> orig : original.entrySet()) //copy map
       this.vars.put(orig.getKey(), new ArrayList<Integer>(orig.getValue()));
 
@@ -30,6 +32,8 @@ public class Node {
         this.vars.put(entry.getKey(), new ArrayList<Integer>(val));
       else
         this.vars.put(entry.getKey(), new ArrayList<Integer>(entry.getValue()));
+      setKeyVal(key);
+      setValUsed(val);
     } //end for
     int k = (int)key.charAt(0);
     assignment.add(k);
@@ -39,10 +43,22 @@ public class Node {
   public int getMaxVals() {
     return maxvals;
   } //end getMaxvals
+  public String getKeyVal() {
+    return keyVal;
+  }
+  public int getValUsed() {
+    return valUsed;
+  }
 
   public void setMaxVals(int max) {
     this.maxvals = max;
   } //end setMaxVals
+  public void setKeyVal(String k) {
+    this.keyVal = k;
+  }
+  public void setValUsed(int v) {
+    this.valUsed = v;
+  }
 
   List<String> pastVariables = new ArrayList<>();
   public char varHuer(List<char[]> constraint) {
