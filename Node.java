@@ -184,8 +184,7 @@ public class Node {
       amount += vals.size();
     maxvals = amount;
   } //end valHuer
-
-   public boolean constrCheck(List<char[]> constraints) { //do this now
+ public boolean constrCheck(List<char[]> constraints) { //do this now
 
 	  Map<String, Integer> assign = new HashMap<String, Integer>();
 
@@ -203,7 +202,7 @@ public class Node {
 		  assign.put(Character.toString(key2), assignment.get(i));
 	  }
 
-    boolean flag = true;
+    	  boolean flag = true;
 	  // Start checking
 	  for(Map.Entry<String, Integer> entry : assign.entrySet())
 	  {
@@ -211,13 +210,15 @@ public class Node {
 		  {
 			  for(int i=0; i < constraints.size();i++)
 			  {
+				  
 				  char [] got = constraints.get(i);
-				  //System.out.println("Var1: " + entry.getKey() + " Con0: " + got[0] + " Con2: " + got[2]);
-          if(entry.getValue() == -1 || entry2.getValue() == -1) {
-            continue;
-          } //end if
+				  //System.out.println("Var1: " + entry.getKey() +" Var2: " + entry2.getKey() + " Con0: " + got[0] + " Con2: " + got[2]);
+				  
+				  if(entry.getValue() == -1 || entry2.getValue() == -1) {
+			            continue;
+			          } //end if
 
-				  if(entry.getKey().equals(Character.toString(got[0])))
+				  if(entry.getKey().equals(Character.toString(got[0])) && entry2.getKey().equals(Character.toString(got[2])))
 				  {
 					  if(got[1] == '<' && entry.getValue() >= entry2.getValue())
 			          	  flag = false;
@@ -231,7 +232,7 @@ public class Node {
 
 					  //System.out.println("Flag1: " + flag);
 				  }
-				  else if(entry2.getKey().equals(Character.toString(got[2])))
+				  else if(entry2.getKey().equals(Character.toString(got[2])) && entry.getKey().equals(Character.toString(got[0])))
 				  {
 					  if(got[1] == '<' && entry2.getValue() >= entry.getValue())
 			          	  flag = false;
@@ -257,7 +258,8 @@ public class Node {
 	  }
 
     return true;
-  } //end constrCheck
+} //end constrCheck
+
 
   public void printAssignment() {
     for (int i = 0; i < assignment.size(); i++) {
