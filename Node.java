@@ -199,7 +199,7 @@ public class Node {
     } //end valHuer
   }
 
-  public boolean constrCheck(List<char[]> constraints) { //do this now
+  public boolean constrCheck(List<char[]> constraints) {
 
 	  Map<String, Integer> assign = new HashMap<String, Integer>();
 
@@ -273,7 +273,94 @@ public class Node {
 	  }
 
     return true;
-} //end constrCheck
+  } //end constrCheck
+
+  public boolean forwardCheck(List<char[]> constraints, char setVar) {
+    int acc = 0;
+    List<Integer> temp = vars.get(Character.toString(setVar));
+    int test = temp.get(0);
+
+      List<Integer> rm = new ArrayList<>();
+
+    for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
+
+    	if(entry.getKey().equals(Character.toString(setVar)))
+    		continue;
+
+      for(int i=0; i < constraints.size(); i++) {
+        char[] got = constraints.get(i);
+        if(setVar == got[0]) {
+          if(got[1] == '>') {
+            for(int check : vars.get(Character.toString(got[2]))) {
+              if(test <= check)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[2])).removeAll(rm);
+          } //end nested if
+          else if(got[1] == '<') {
+            for(int check : vars.get(Character.toString(got[2]))) {
+              if(test >= check)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[2])).removeAll(rm);
+          } //end else if
+          else if(got[1] == '=') {
+            for(int check : vars.get(Character.toString(got[2]))) {
+              if(test != check)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[2])).removeAll(rm);
+          } //end else if
+          else if(got[1] == '!') {
+            for(int check : vars.get(Character.toString(got[2]))) {
+              if(test == check)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[2])).removeAll(rm);
+          } //end else if
+          else { };
+        } //end if
+        if(setVar == got[2]) {
+          if(got[1] == '>') {
+            for(int check : vars.get(Character.toString(got[0]))) {
+              if(check <= test)
+                rm.add(check);  
+            } //end for
+            vars.get(Character.toString(got[0])).removeAll(rm);
+          } //end nested if
+          else if(got[1] == '<') {
+            for(int check : vars.get(Character.toString(got[0]))) {
+              if(check >= test)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[0])).removeAll(rm);
+          } //end else if
+          else if(got[1] == '=') {
+            for(int check : vars.get(Character.toString(got[0]))) {
+              if(test != check)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[0])).removeAll(rm);
+          } //end else if
+          else if(got[1] == '!') {
+            for(int check : vars.get(Character.toString(got[0]))) {
+              if(test == check)
+                rm.add(check);
+            } //end for
+            vars.get(Character.toString(got[0])).removeAll(rm);
+          } //end else if
+          else { };
+        } //end if
+
+      } //end nested for
+
+    } //end for
+    for(List<Integer> entry : vars.values()) {
+      if(entry.size() < 1)
+        return false;
+    } //end for
+    return true;
+  } //end forwardCheck
 
   public void printAssignment() {
     for (int i = 0; i < assignment.size(); i++) {

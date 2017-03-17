@@ -93,6 +93,15 @@ public class AI2 {
 		 	if(child.constrCheck(constr) ==  true)
 		 	{
 		 		//System.out.println("Debug 1");
+        if(fc) {
+          if(!next.forwardCheck(constr, nextVariable)) {
+            i++;
+            System.out.print(i + ". ");
+    		 		child.printAssignment();
+    		 		System.out.print(" failure \n");
+            break;
+          }
+        }
 		 		searchSTK.push(next); //will next on the stack be changed to child??
 		 		next = child;
 		 		flag = true;
@@ -104,7 +113,7 @@ public class AI2 {
 		 		i++;
         System.out.print(i + ". ");
 		 		child.printAssignment();
-		 		System.out.print(" fail \n");
+		 		System.out.print(" failure \n");
 		 	}
 		}
 
