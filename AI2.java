@@ -76,7 +76,6 @@ public class AI2 {
 	  int i = 0;
     while(i < 30) {
     	char nextVariable = next.varHuer(constr);
-
     	System.out.println("Now checking Variable: " + nextVariable);
 
 
@@ -121,10 +120,18 @@ public class AI2 {
 		if(flag == false)
 		{
 			if(!searchSTK.isEmpty()) {
-				next = searchSTK.pop();
-        //List<Integer> rm = next.vars.get();
+				Node temp = searchSTK.pop();
+        List<Integer> rm = temp.vars.get(next.getKeyVal());
+        int v = next.getValUsed();
+        if(v != -1) {
+          for(int j = 0; j < rm.size(); j++) {
+            if(rm.get(j) == v)
+              rm.remove(j);
+          } //end for
+          next = temp;
+        }
 
-      }
+      } //end if
       else {
 				System.out.println("There is no solution.");
 				return;
