@@ -6,6 +6,6 @@ public class CSPCompare implements Comparator<Node> {
     public int compare(Node a, Node b) {
       Integer a2 = new Integer(a.getMaxVals());
       Integer b2 = new Integer(b.getMaxVals());
-      return a2.compareTo(b2);
+      return b2.compareTo(a2);
     } //end compare
 } //end CSPCompare

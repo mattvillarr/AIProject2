@@ -33,9 +33,6 @@ public class AI2 {
           vList.put(key.substring(0, 1), tempList);
       } //end while
 
-        /*for(Map.Entry entry : vList.entrySet()) {
-          System.out.println(entry.getKey() + ", " + entry.getValue());
-        } //end for*/
     } //end try
     catch(FileNotFoundException g) {
       g.printStackTrace();
@@ -49,10 +46,6 @@ public class AI2 {
         constr.add(arr);
       } //end while
 
-        /*for(int i = 0; i < constr.size(); i++) {
-          char[] got = constr.get(i);
-          System.out.println(got[0] + " " + got[1] + " " + got[2]);
-        } //end for*/
     } //end try
     catch(FileNotFoundException f) {
       f.printStackTrace();
@@ -61,9 +54,7 @@ public class AI2 {
     if(args[2].equals("fc"))
       fc = true;
 
-    //LinkedList<Node> space = new LinkedList<Node>();
     Node head = new Node(vList);
-    //space.addFirst(head);
 
     Node next = head;
 
@@ -71,26 +62,26 @@ public class AI2 {
     Comparator<Node> comparator = new CSPCompare();
     PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
 
-    System.out.println("Now doing backtracking...");
+    //System.out.println("Now doing backtracking...");
+    searchSTK.push(head);
 
 	  int i = 0;
     while(i < 30) {
     	char nextVariable = next.varHuer(constr);
-    	System.out.println("Now checking Variable: " + nextVariable);
 
-
-
+    	//System.out.println("Now checking Variable: " + nextVariable);
     	Node child = null;
-		if(vList.containsKey(Character.toString(nextVariable)))
-		{
-			for(int j = 0 ; j < vList.get(Character.toString(nextVariable)).size();j++)
-			{
 
+		if(next.vars.containsKey(Character.toString(nextVariable)))
+		{
+			for(int j = 0 ; j < next.vars.get(Character.toString(nextVariable)).size();j++)
+			{
+				//System.out.println("Creating new node.");
 				String var = Character.toString(nextVariable);
 				//System.out.println(tempList.get(i));
-				child = new Node(next, var, vList.get(Character.toString(nextVariable)).get(j));
-	    		child.valHuer(constr);
-	    		pq.offer(child);
+				child = new Node(next, var, next.vars.get(Character.toString(nextVariable)).get(j));
+	    	child.valHuer(constr, nextVariable);
+	    	pq.offer(child);
 			}
 		}
 
@@ -101,7 +92,8 @@ public class AI2 {
 			child = pq.poll();
 		 	if(child.constrCheck(constr) ==  true)
 		 	{
-        searchSTK.push(next); //will next on the stack be changed to child??
+		 		//System.out.println("Debug 1");
+		 		searchSTK.push(next); //will next on the stack be changed to child??
 		 		next = child;
 		 		flag = true;
 		 		pq.clear();
@@ -110,10 +102,9 @@ public class AI2 {
 		 	else
 		 	{
 		 		i++;
+        System.out.print(i + ". ");
 		 		child.printAssignment();
-        System.out.print(" fail \n");
-		 		//child = pq.poll();
-
+		 		System.out.print(" fail \n");
 		 	}
 		}
 
@@ -121,25 +112,39 @@ public class AI2 {
 		{
 			if(!searchSTK.isEmpty()) {
 				Node temp = searchSTK.pop();
-        List<Integer> rm = temp.vars.get(next.getKeyVal());
+				String sk = next.getKeyVal();
+        List<Integer> rm = temp.vars.get(sk);
         int v = next.getValUsed();
         if(v != -1) {
           for(int j = 0; j < rm.size(); j++) {
             if(rm.get(j) == v)
               rm.remove(j);
           } //end for
-          next = temp;
-        }
+          temp.vars.remove(sk);
 
-      } //end if
+          next = new Node(temp);
+          next.vars.put(sk, rm);
+        }
+      }
       else {
 				System.out.println("There is no solution.");
 				return;
 			}
-
 		}
-    	//next = new Node(head);
 
+    if(flag) {
+      Boolean correct = true;
+      for(List<Integer> answer : next.vars.values()) {
+        if(answer.size() != 1)
+          correct = false;
+      }
+      if(correct) {
+        System.out.print((i+1) + ". ");
+        next.printAssignment();
+        System.out.println(" solution\n");
+        return;
+      }
+    }
 
     } //end for
   } //end main
