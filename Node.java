@@ -9,6 +9,9 @@ public class Node {
   public Map<String, List<Integer>> vars = new HashMap<String, List<Integer>>();
   public List<Integer> assignment = new ArrayList<Integer>();
   private int maxvals = -1;
+  private String keyVal = " ";
+  private int valUsed = -1;
+
 
   public Node(Map<String, List<Integer>> original) { //constructor
     for(Map.Entry<String, List<Integer>> orig : original.entrySet()) //copy map
@@ -24,26 +27,41 @@ public class Node {
   } //end Node(1)
 
   public Node(Node parent, String key, int val) {
-    for(Map.Entry<String, List<Integer>> entry : parent.vars.entrySet()) {
-      String check = entry.getKey();
-      if(key.equals(check))
-        this.vars.put(entry.getKey(), new ArrayList<Integer>(val));
-      else
-        this.vars.put(entry.getKey(), new ArrayList<Integer>(entry.getValue()));
-    } //end for
-    int k = (int)key.charAt(0);
-    assignment.add(k);
-    assignment.add(val);
-  } //end Node(3)
+	    for(Map.Entry<String, List<Integer>> entry : parent.vars.entrySet()) {
+	      String check = entry.getKey();
+	      if(key.equals(check))
+	        this.vars.put(entry.getKey(), new ArrayList<Integer>(val));
+	      else
+	        this.vars.put(entry.getKey(), new ArrayList<Integer>(entry.getValue()));
+	      setKeyVal(key);
+	      setValUsed(val);
+	    } //end for
+	    int k = (int)key.charAt(0);
+	    this.assignment = new ArrayList<Integer>(parent.assignment);
+	    assignment.add(k);
+	    assignment.add(val);
+	  } //end Node(3)
 
-  public int getMaxVals() {
-    return maxvals;
-  } //end getMaxvals
-
-  public void setMaxVals(int max) {
-    this.maxvals = max;
-  } //end setMaxVals
-
+  
+  	public int getMaxVals(){
+  	  return maxvals;
+    }
+  	public String getKeyVal() {
+  	    return keyVal;
+  	  }
+  	  public int getValUsed() {
+  	    return valUsed;
+  	}
+ 	
+    public void setMaxVals(int max) {
+        this.maxvals = max;
+      } //end setMaxVals
+      public void setKeyVal(String k) {
+        this.keyVal = k;
+      }
+      public void setValUsed(int v) {
+        this.valUsed = v;
+    }
   List<String> pastVariables = new ArrayList<>();
   public char varHuer(List<char[]> constraint) {
     int maxSize = -1;
@@ -52,12 +70,12 @@ public class Node {
     char constVar = 'z';
     char constVar2 = 'z';
     char returnVar = 'z';
-
-
+    
+    
     int mrv = 1000;
     char returnChar = 'z';
-   Map<String, Integer> remainingVariables = new HashMap<String, Integer>();
-
+    Map<String, Integer> remainingVariables = new HashMap<String, Integer>();
+    
     //**********************************************************
     //				FIND MAX SET 							   *
     //**********************************************************
@@ -70,9 +88,9 @@ public class Node {
         if(v.size() == maxSize)
         	remainingVariables.put(entry.getKey(),0);
     }
-
+    
     System.out.println("Max Length is :" + maxSize);
-
+    
     //**********************************************************
     //				MOST CONSTRAINED VARIABLE				   *
     //**********************************************************
@@ -80,17 +98,20 @@ public class Node {
     {
     	List<Integer> varList = entry.getValue();
     	//System.out.println("Var: " + entry.getKey() + " size: " + varList.size());
-
-		if(varList.size() < mrv && !pastVariables.contains(Character.toString(constVar)))
-    	{
+    
+    	if(checkAssignment(entry.getKey())){
+    		continue;
+    	}
+    	
+    	
+		if(varList.size() < mrv ){
     		mrv = varList.size();
     		constVar = entry.getKey().charAt(0);
-    		System.out.println("Current Variable is: " + constVar);
+    		System.out.println("Current Variable is: " + constVar);    		
     	}
 
     }
-    if(mrv < maxSize)
-    {
+    if(mrv < maxSize){
     	 pastVariables.add(Character.toString(constVar));
     	 System.out.println("Returning Variable: " + constVar);
     	 return constVar;
@@ -98,7 +119,7 @@ public class Node {
     //**********************************************************
     //				MOST CONSTRAINING VARIABLE				   *
     //**********************************************************
-
+    
     	//List<Integer> varList = entry.getValue();
     	//System.out.println("Var: " + entry.getKey() + " size: " + varList.size());
     int max = 0;
@@ -111,21 +132,22 @@ public class Node {
 			{
 				if(constraint.contains(entry.getKey()))
 					remainingVariables.put(entry.getKey(), entry.getValue() + 1);
+				System.out.println("remaining vaiable in most constraining.");
 			}
-
+			
 			if(entry.getValue() > max)
 			{
 				max = entry.getValue();
 				constVar = entry.getKey().charAt(0);
-
+				System.out.println("Most constraining.");
 			}
 		}
-
+		    
 	}
 	pastVariables.add(Character.toString(constVar));
     System.out.println("Returning Variable: " + constVar);
     return constVar;
-
+    
     /*
     for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
       List<Integer> v = entry.getValue();
@@ -153,8 +175,23 @@ public class Node {
     } //end for
     return returnVar;*/
   } //end varHuer
+  
+  public boolean checkAssignment(String key)
+  {
+		  for(int i = 0; i < assignment.size(); i++)
+		  	{
+		  		int var = assignment.get(i);
+		  		if((char)var == key.charAt(0))
+		  		{
+		  			return true;
+		  		}
+		  		i++;
+		  	}
+	  return false;
+	  
+  }
 
-   public void valHuer(List<char[]> constraint) {
+  public void valHuer(List<char[]> constraint) {
 
     Map<String, List<Integer>> check = new HashMap<String, List<Integer>>();
 
@@ -169,16 +206,15 @@ public class Node {
     maxvals = amount;
   } //end valHuer
 
-   public boolean constrCheck(List<char[]> constraints) { //do this now
-	  boolean flag = false;
+
+  public boolean constrCheck(List<char[]> constraints) { //do this now
+
 	  Map<String, Integer> assign = new HashMap<String, Integer>();
 
 	  // Initialize the 'assign' map, so that every variable is null
 	  for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
 	        	assign.put(entry.getKey(),-1);
 	  }
-
-
 
 	  // Update the 'assign' map
 	  for(int i=0; i < assignment.size();i++)
@@ -189,6 +225,7 @@ public class Node {
 		  assign.put(Character.toString(key2), assignment.get(i));
 	  }
 
+    boolean flag = true;
 	  // Start checking
 	  for(Map.Entry<String, Integer> entry : assign.entrySet())
 	  {
@@ -196,73 +233,55 @@ public class Node {
 		  {
 			  for(int i=0; i < constraints.size();i++)
 			  {
-          flag = false; //reinitialize back to false
+				  
 				  char [] got = constraints.get(i);
-				  System.out.println("Var1: " + entry.getKey() + " Con0: " + got[0] + " Con2: " + got[2]);
-				  if(entry.getKey().equals(Character.toString(got[0])))
+				  //System.out.println("Var1: " + entry.getKey() +" Var2: " + entry2.getKey() + " Con0: " + got[0] + " Con2: " + got[2]);
+				  
+				  if(entry.getValue() == -1 || entry2.getValue() == -1) {
+			            continue;
+			          } //end if
+
+				  if(entry.getKey().equals(Character.toString(got[0])) && entry2.getKey().equals(Character.toString(got[2])))
 				  {
-					  if((got[1] == '<' && entry.getValue() < entry2.getValue()) || entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
-			            else if((got[1] == '>' && entry.getValue() > entry2.getValue()) || entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
-			            else if((got[1] == '=' && entry.getValue() == entry2.getValue()) || entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
-			            else if((got[1] == '!' && entry.getValue() != entry2.getValue()) || entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
+					  if(got[1] == '<' && entry.getValue() >= entry2.getValue())
+			          	  flag = false;
+			            else if(got[1] == '>' && entry.getValue() <= entry2.getValue())
+			          	  flag = false;
+			            else if(got[1] == '=' && entry.getValue() != entry2.getValue())
+			          	  flag = false;
+			            else if(got[1] == '!' && entry.getValue() == entry2.getValue())
+			          	  flag = false;
 			            else { } //do nothing
 
-					  System.out.println("Flag1: " + flag);
+					  //System.out.println("Flag1: " + flag);
 				  }
-				  else if(entry2.getKey().equals(Character.toString(got[2])))
+				  else if(entry2.getKey().equals(Character.toString(got[2])) && entry.getKey().equals(Character.toString(got[0])))
 				  {
-					  if((got[1] == '<' && entry2.getValue() < entry.getValue())|| entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
-			            else if((got[1] == '>' && entry2.getValue() > entry.getValue())|| entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
-			            else if((got[1] == '=' && entry2.getValue() == entry.getValue())|| entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
-			            else if((got[1] == '!' && entry2.getValue() != entry.getValue())|| entry.getValue() == -1 || entry2.getValue() == -1)
-			          	  flag = true;
+					  if(got[1] == '<' && entry2.getValue() >= entry.getValue())
+			          	  flag = false;
+			            else if(got[1] == '>' && entry2.getValue() <= entry.getValue())
+			          	  flag = false;
+			            else if(got[1] == '=' && entry2.getValue() != entry.getValue())
+			          	  flag = false;
+			            else if(got[1] == '!' && entry2.getValue() == entry.getValue())
+			          	  flag = false;
 			            else { } //do nothing
-					  System.out.println("Flag2: " + flag);
+					  //System.out.println("Flag2: " + flag);
 				  }
 				  else
 				  {
-					  System.out.println("No flag: " + flag);
-					  continue;
-
+					  //System.out.println("No flag: " + flag);
 				  }
+
+          if(!flag)
+            return false;
 			  }
 		  }
 
 	  }
-	 /* for(int i = 0; i < assignment.size(); i++) {
-		  for(Map.Entry<String, List<Integer>> entry : vars.entrySet())
-		  {
-			  List<Integer> v = entry.getValue();
 
-			  for(int j = 0; j < constraints.size();j++) {
-				   char[] got = constraints.get(i);
-
-		            if(assignment.get(i).toString() == entry.getKey() && got[0] < got[2])
-		          	  flag = true;
-		            else if(got[1] == '>' && got[0] > got[2])
-		          	  flag = true;
-		            else if(got[1] == '=' && got[0] == got[2])
-		          	  flag = true;
-		            else if(got[1] == '!' && got[0] != got[2])
-		          	  flag = true;
-		            else
-		          	  flag = false;
-		  }
-	    }
-
-
-
-          //System.out.println(got[0] + " " + got[1] + " " + got[2]);
-        } //end for*/
-    return flag;
-  } //end constrCheck
+    return true;
+} //end constrCheck
 
   public void printAssignment() {
     for (int i = 0; i < assignment.size(); i++) {
@@ -273,17 +292,6 @@ public class Node {
     } //end for
     System.out.println();
   } //end printAssignment
-
-
-
-
-
-
-
-
-
-
-
 
 
 
