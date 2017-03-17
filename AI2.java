@@ -72,25 +72,25 @@ public class AI2 {
     PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
 
     System.out.println("Now doing backtracking...");
+    searchSTK.push(head);
 
 	  int i = 0;
     while(i < 30) {
     	char nextVariable = next.varHuer(constr);
+
     	System.out.println("Now checking Variable: " + nextVariable);
-
-
-
     	Node child = null;
-		if(vList.containsKey(Character.toString(nextVariable)))
-		{
-			for(int j = 0 ; j < vList.get(Character.toString(nextVariable)).size();j++)
-			{
 
+		if(next.vars.containsKey(Character.toString(nextVariable)))
+		{
+			for(int j = 0 ; j < next.vars.get(Character.toString(nextVariable)).size();j++)
+			{
+				System.out.println("Creating new node.");
 				String var = Character.toString(nextVariable);
 				//System.out.println(tempList.get(i));
-				child = new Node(next, var, vList.get(Character.toString(nextVariable)).get(j));
-	    		child.valHuer(constr);
-	    		pq.offer(child);
+				child = new Node(next, var, next.vars.get(Character.toString(nextVariable)).get(j));
+	    	child.valHuer(constr, nextVariable);
+	    	pq.offer(child);
 			}
 		}
 
@@ -101,7 +101,8 @@ public class AI2 {
 			child = pq.poll();
 		 	if(child.constrCheck(constr) ==  true)
 		 	{
-        searchSTK.push(next); //will next on the stack be changed to child??
+		 		//System.out.println("Debug 1");
+		 		searchSTK.push(next); //will next on the stack be changed to child??
 		 		next = child;
 		 		flag = true;
 		 		pq.clear();
@@ -111,7 +112,7 @@ public class AI2 {
 		 	{
 		 		i++;
 		 		child.printAssignment();
-        System.out.print(" fail \n");
+		 		System.out.print(" fail \n");
 		 		//child = pq.poll();
 
 		 	}
@@ -121,23 +122,38 @@ public class AI2 {
 		{
 			if(!searchSTK.isEmpty()) {
 				Node temp = searchSTK.pop();
-        List<Integer> rm = temp.vars.get(next.getKeyVal());
+				String sk = next.getKeyVal();
+        List<Integer> rm = temp.vars.get(sk);
         int v = next.getValUsed();
         if(v != -1) {
           for(int j = 0; j < rm.size(); j++) {
             if(rm.get(j) == v)
               rm.remove(j);
           } //end for
-          next = temp;
+          temp.vars.remove(sk);
+        
+          next = new Node(temp);
+          next.vars.put(sk, rm);
         }
-
-      } //end if
+      }
       else {
 				System.out.println("There is no solution.");
 				return;
 			}
-
 		}
+
+    if(flag) {
+      Boolean correct = true;
+      for(List<Integer> answer : next.vars.values()) {
+        if(answer.size() != 1)
+          correct = false;
+      }
+      if(correct) {
+        System.out.println("Correct!");
+        next.printAssignment();
+        return;
+      }
+    }
     	//next = new Node(head);
 
 
