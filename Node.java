@@ -28,14 +28,16 @@ public class Node {
   public Node(Node parent, String key, int val) {
     for(Map.Entry<String, List<Integer>> entry : parent.vars.entrySet()) {
       String check = entry.getKey();
-      if(key.equals(check))
+      if(key.equals(check)) {
         this.vars.put(entry.getKey(), new ArrayList<Integer>(val));
+      }
       else
         this.vars.put(entry.getKey(), new ArrayList<Integer>(entry.getValue()));
       setKeyVal(key);
       setValUsed(val);
     } //end for
     int k = (int)key.charAt(0);
+    this.assignment = new ArrayList<Integer>(parent.assignment);
     assignment.add(k);
     assignment.add(val);
   } //end Node(3)
