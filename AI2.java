@@ -76,21 +76,20 @@ public class AI2 {
 	  int i = 0;
     while(i < 30) {
     	char nextVariable = next.varHuer(constr);
+
     	System.out.println("Now checking Variable: " + nextVariable);
-
-
-
     	Node child = null;
+
 		if(vList.containsKey(Character.toString(nextVariable)))
 		{
 			for(int j = 0 ; j < vList.get(Character.toString(nextVariable)).size();j++)
 			{
-
+				System.out.println("Creating new node.");
 				String var = Character.toString(nextVariable);
 				//System.out.println(tempList.get(i));
 				child = new Node(next, var, vList.get(Character.toString(nextVariable)).get(j));
-	    		child.valHuer(constr);
-	    		pq.offer(child);
+	    	child.valHuer(constr);
+	    	pq.offer(child);
 			}
 		}
 
@@ -101,7 +100,8 @@ public class AI2 {
 			child = pq.poll();
 		 	if(child.constrCheck(constr) ==  true)
 		 	{
-        searchSTK.push(next); //will next on the stack be changed to child??
+		 		System.out.println("Debug 1");
+		 		searchSTK.push(next); //will next on the stack be changed to child??
 		 		next = child;
 		 		flag = true;
 		 		pq.clear();
@@ -111,7 +111,7 @@ public class AI2 {
 		 	{
 		 		i++;
 		 		child.printAssignment();
-        System.out.print(" fail \n");
+		 		System.out.print(" fail \n");
 		 		//child = pq.poll();
 
 		 	}
@@ -130,8 +130,7 @@ public class AI2 {
           } //end for
           next = temp;
         }
-
-      } //end if
+      }
       else {
 				System.out.println("There is no solution.");
 				return;
