@@ -1,3 +1,8 @@
+/*****************************************************
+CS 4365.001
+Colleen Cousins
+Matthew Villarreal
+******************************************************/
 import java.util.Comparator;
 
 public class CSPCompare implements Comparator<Node> {
