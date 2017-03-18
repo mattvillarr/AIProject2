@@ -7,7 +7,8 @@ import java.util.*;
 import java.io.*;
 
 public class AI2 {
-  public static void main(String[] args) {
+
+	public static void main(String[] args) {
 
     Boolean fc = false;
 
@@ -16,11 +17,11 @@ public class AI2 {
 
     Scanner vScan = null;
     Scanner cScan = null;
-    Map<String, List<Integer>> vList = new HashMap<String, List<Integer>>();
 
+    Map<String, List<Integer>> vList = new HashMap<String, List<Integer>>();
     List<char[]> constr = new ArrayList<>();
 
-    try {
+    try { //var file parsing
       vScan = new Scanner(varF);
 
       while(vScan.hasNext()) {
@@ -32,10 +33,6 @@ public class AI2 {
 
           vList.put(key.substring(0, 1), tempList);
       } //end while
-
-        /*for(Map.Entry entry : vList.entrySet()) {
-          System.out.println(entry.getKey() + ", " + entry.getValue());
-        } //end for*/
     } //end try
     catch(FileNotFoundException g) {
       g.printStackTrace();
@@ -48,98 +45,102 @@ public class AI2 {
         char arr[] = {in[0], in[2], in[4]};
         constr.add(arr);
       } //end while
-
-        /*for(int i = 0; i < constr.size(); i++) {
-          char[] got = constr.get(i);
-          System.out.println(got[0] + " " + got[1] + " " + got[2]);
-        } //end for*/
     } //end try
     catch(FileNotFoundException f) {
       f.printStackTrace();
     } //end catch
 
-    if(args[2].equals("fc"))
+    if(args[2].equals("fc")) //fc flag
       fc = true;
 
-    //LinkedList<Node> space = new LinkedList<Node>();
     Node head = new Node(vList);
-    //space.addFirst(head);
-
     Node next = head;
-
     Stack<Node> searchSTK = new Stack<>();
     Comparator<Node> comparator = new CSPCompare();
     PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
 
-    System.out.println("Now doing backtracking...");
+    searchSTK.push(head);
 
-	  int i = 0;
+	int i = 0;
     while(i < 30) {
-    	char nextVariable = next.varHuer(constr);
-
-    	System.out.println("Now checking Variable: " + nextVariable);
+    	char nextVariable = next.varHuer(constr); //get most constrained variable
     	Node child = null;
 
-		if(vList.containsKey(Character.toString(nextVariable)))
-		{
-			for(int j = 0 ; j < vList.get(Character.toString(nextVariable)).size();j++)
-			{
-				System.out.println("Creating new node.");
+		if(next.vars.containsKey(Character.toString(nextVariable))) {
+			for(int j = 0 ; j < next.vars.get(Character.toString(nextVariable)).size();j++) { //create next depth
 				String var = Character.toString(nextVariable);
-				//System.out.println(tempList.get(i));
-				child = new Node(next, var, vList.get(Character.toString(nextVariable)).get(j));
-	    	child.valHuer(constr);
-	    	pq.offer(child);
-			}
-		}
+				child = new Node(next, var, next.vars.get(Character.toString(nextVariable)).get(j));
+				child.valHuer(constr, nextVariable);
+				pq.offer(child);
+			} //end for
+		} //end if
 
-		boolean flag = false;
-
-		while(!pq.isEmpty())
-		{
+		boolean flag = false; //flag for when child passes constraint test
+		while(!pq.isEmpty()) {
 			child = pq.poll();
-		 	if(child.constrCheck(constr) ==  true)
-		 	{
-		 		System.out.println("Debug 1");
-		 		searchSTK.push(next); //will next on the stack be changed to child??
+
+		 	if(child.constrCheck(constr) ==  true) {
+		 		if(fc) { //do forward checking
+		 			if(!next.forwardCheck(constr, nextVariable)) {
+		 				i++;
+		 				System.out.print(i + ". ");
+		 				child.printAssignment();
+		 				System.out.print(" failure \n");
+		 				break;
+		 			} //end nested if (3)
+		 		} //end nested if (2)
+
+		 		searchSTK.push(next);
 		 		next = child;
 		 		flag = true;
-		 		pq.clear();
+		 		pq.clear(); //clears priority queue for next depth
 		 		break;
-		 	}
-		 	else
-		 	{
+		 	} //end if
+		 	else {
 		 		i++;
+		 		System.out.print(i + ". ");
 		 		child.printAssignment();
-		 		System.out.print(" fail \n");
-		 		//child = pq.poll();
+		 		System.out.print(" failure \n");
+		 	}//end else
+		} //end while
 
-		 	}
-		}
-
-		if(flag == false)
-		{
+		if(flag == false) {
 			if(!searchSTK.isEmpty()) {
 				Node temp = searchSTK.pop();
-        List<Integer> rm = temp.vars.get(next.getKeyVal());
-        int v = next.getValUsed();
-        if(v != -1) {
-          for(int j = 0; j < rm.size(); j++) {
-            if(rm.get(j) == v)
-              rm.remove(j);
-          } //end for
-          next = temp;
-        }
-      }
-      else {
+				String sk = next.getKeyVal();
+				List<Integer> rm = temp.vars.get(sk);
+				int v = next.getValUsed();
+				if(v != -1) { //node is not head node
+					for(int j = 0; j < rm.size(); j++) {
+						if(rm.get(j) == v)
+							rm.remove(j);
+					} //end for
+
+					temp.vars.remove(sk);
+					next = new Node(temp);
+					next.vars.put(sk, rm);
+				} //end nested if (3)
+			} //end nested if (2)
+			else {
 				System.out.println("There is no solution.");
 				return;
-			}
+			} //end else
+		} //end if (1)
 
-		}
-    	//next = new Node(head);
+		if(flag) { //valid assignment
+			Boolean correct = true;
+			for(List<Integer> answer : next.vars.values()) {
+				if(answer.size() != 1) //variable is not assigned
+					correct = false;
+			} //end for
 
-
+			if(correct) { //solution is found
+				System.out.print((i+1) + ". ");
+				next.printAssignment();
+				System.out.println(" solution\n");
+				return;
+			} //end nested if
+		} //end if
     } //end for
   } //end main
 } //end class AI2
