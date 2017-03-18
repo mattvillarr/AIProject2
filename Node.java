@@ -6,13 +6,13 @@ Matthew Villarreal
 import java.util.*;
 
 public class Node {
-	
+
     public Map<String, List<Integer>> vars = new HashMap<String, List<Integer>>();
     public List<Integer> assignment = new ArrayList<Integer>();
     private int maxvals = -1;
     private String keyVal = " ";
     private int valUsed = -1;
-    
+
     public Node(Node other) {
     	for(Map.Entry<String, List<Integer>> orig : other.vars.entrySet()) //copy map
     		this.vars.put(orig.getKey(), new ArrayList<Integer>(orig.getValue()));
@@ -21,7 +21,7 @@ public class Node {
     		this.maxvals = other.maxvals;
     		this.valUsed = other.valUsed;
     } //end Node(1)
-    
+
     public Node(Map<String, List<Integer>> original) { //constructor
     	for(Map.Entry<String, List<Integer>> orig : original.entrySet()) //copy map
     		this.vars.put(orig.getKey(), new ArrayList<Integer>(orig.getValue()));
@@ -37,7 +37,7 @@ public class Node {
 	    	}// end if
 	    	else
 	    		this.vars.put(entry.getKey(), new ArrayList<Integer>(entry.getValue()));
-	    	
+
 	    	setKeyVal(key);
 	    	setValUsed(val);
 	    } //end for
@@ -58,7 +58,7 @@ public class Node {
   	    return valUsed;
   	} // getValUsed
 
-  	// SETTERS  
+  	// SETTERS
     public void setMaxVals(int max) {
         this.maxvals = max;
     } //end setMaxVals
@@ -68,7 +68,7 @@ public class Node {
     public void setValUsed(int v) {
         this.valUsed = v;
     } // end setValUsed
-    
+
     List<String> pastVariables = new ArrayList<>();
     public char varHuer(List<char[]> constraint) {
 	    int maxSize = 10000;
@@ -114,7 +114,7 @@ public class Node {
 	  		i++;
 		}// end for
     	return false;
-    } // end checkAssignment 
+    } // end checkAssignment
 
     public void valHuer(List<char[]> constraints, char setVar) {
 
@@ -124,7 +124,7 @@ public class Node {
     	for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
     		if(entry.getKey().equals(Character.toString(setVar)))
     			continue;
-    		
+
 	    	for(int i=0; i < constraints.size(); i++) {
 	    		char[] got = constraints.get(i);
 	    		if(setVar == got[0]) {
@@ -192,7 +192,7 @@ public class Node {
     	// Initialize the 'assign' map, so that every variable is null
     	for(Map.Entry<String, List<Integer>> entry : vars.entrySet()) {
 	        assign.put(entry.getKey(),-1);
-    	}
+    	} //end for
 
     	// Update the 'assign' map
     	for(int i=0; i < assignment.size();i++){
@@ -200,16 +200,16 @@ public class Node {
     		char key2 = (char)key;
     		i++;
     		assign.put(Character.toString(key2), assignment.get(i));
-	    }
+	    } //end for
 
     	boolean flag = true;
-	  
+
     	// Start checking
     	for(Map.Entry<String, Integer> entry : assign.entrySet()) {
     		for(Map.Entry<String, Integer> entry2 : assign.entrySet()) {
     			for(int i=0; i < constraints.size();i++) {
     				char [] got = constraints.get(i);
-				  
+
     				if(entry.getValue() == -1 || entry2.getValue() == -1) {
 			            	continue;
     				} //end if
@@ -292,7 +292,7 @@ public class Node {
 	    			if(got[1] == '>') {
 	    				for(int check : vars.get(Character.toString(got[0]))) {
 	    					if(check <= test)
-	    						rm.add(check);  
+	    						rm.add(check);
 	    				} //end for
 	    				vars.get(Character.toString(got[0])).removeAll(rm);
 	    			} //end nested if

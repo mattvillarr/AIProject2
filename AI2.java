@@ -7,7 +7,7 @@ import java.util.*;
 import java.io.*;
 
 public class AI2 {
-	
+
 	public static void main(String[] args) {
 
     Boolean fc = false;
@@ -17,7 +17,7 @@ public class AI2 {
 
     Scanner vScan = null;
     Scanner cScan = null;
-    
+
     Map<String, List<Integer>> vList = new HashMap<String, List<Integer>>();
     List<char[]> constr = new ArrayList<>();
 
@@ -60,21 +60,19 @@ public class AI2 {
     PriorityQueue<Node> pq = new PriorityQueue<>(500, comparator);
     searchSTK.push(head);
 	int i = 0;
-	
+
     while(i < 30) {
     	char nextVariable = next.varHuer(constr);
     	Node child = null;
 
-		if(next.vars.containsKey(Character.toString(nextVariable)))
-		{
-			for(int j = 0 ; j < next.vars.get(Character.toString(nextVariable)).size();j++)
-			{
+		if(next.vars.containsKey(Character.toString(nextVariable))) {
+			for(int j = 0 ; j < next.vars.get(Character.toString(nextVariable)).size();j++) {
 				String var = Character.toString(nextVariable);
 				child = new Node(next, var, next.vars.get(Character.toString(nextVariable)).get(j));
 				child.valHuer(constr, nextVariable);
 				pq.offer(child);
-			}
-		}
+			} //end for
+		} //end if
 		boolean flag = false;
 
 		while(!pq.isEmpty()) {
@@ -89,13 +87,13 @@ public class AI2 {
 		 				break;
 		 			}// nested if (3)
 		 		}// nested if (2)
-		 		
-		 		searchSTK.push(next); 
+
+		 		searchSTK.push(next);
 		 		next = child;
 		 		flag = true;
 		 		pq.clear();
 		 		break;
-		 	}
+		 	} //end if
 		 	else {
 		 		i++;
 		 		System.out.print(i + ". ");
@@ -115,7 +113,7 @@ public class AI2 {
 						if(rm.get(j) == v)
 							rm.remove(j);
 					} //end for
-					
+
 					temp.vars.remove(sk);
 					next = new Node(temp);
 					next.vars.put(sk, rm);
@@ -140,7 +138,6 @@ public class AI2 {
 				return;
 			}// end nested if
 		}// end if
-
     } //end for
   } //end main
 } //end class AI2
